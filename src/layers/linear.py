@@ -10,7 +10,7 @@ class Linear:
         self.in_features = in_features
         self.out_features = out_features
         
-        self.weight = np.zeros((self.in_features, self.out_features))
+        self.weights = np.zeros((self.in_features, self.out_features))
         if bias:
             self.bias = np.zeros(self.out_features)    
         else:
@@ -20,15 +20,16 @@ class Linear:
 
     def init_weights(self, how: str='normal') -> None:
         if how == 'normal':
-            self.weight = np.random.normal(0.0, 0.01, size = (self.out_features, self.in_features))
+            self.weights = np.random.normal(0.0, 0.01, size = (self.out_features, self.in_features))
             if self.bias is not None:
                 self.bias = np.random.normal(0, 0.01, size = (self.out_features))
     
-    def forwad(self, inputs: np.array) -> np.array:
-        assert inputs.shape[0] == self.weight.shape[1]
-        return np.dot(self.weight, inputs) + self.bias        
+    def __call__(self, inputs: np.ndarray) -> np.ndarray:
+        assert inputs.shape[0] == self.weights.shape[1]
+        return np.dot(self.weights, inputs) + self.bias        
         
-    def backward(self, gradient, lr: float):
-        pass
-        
+    def backward(self, gradient: np.ndarray) -> np.ndarray:
+        self.weights_grad = np.dot(self.input.T, gradient)
+        self.bias_grad = np.sum(gradient, axis=0)
+        return gradient @ self.weights.T
         
