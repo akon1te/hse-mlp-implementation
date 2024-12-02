@@ -39,17 +39,16 @@ class Trainer:
                     eval_loss = self.count_eval_loss(eval_data)
                     print(f'Eval loss: {eval_loss}')
                     
-        
     def train_step(self, train_data: dict) -> None:        
         loss_sum = 0
-        X = np.array(train_data['features'])
+        X = train_data['features']
         y = train_data['labels']
 
         for x, y in zip(X, y):
             predictions = self.model.forward(x)
             loss = self.criterion(predictions, y)
             loss_sum += loss
-            self.optimizer.step(self.model, loss)
+            self.model.layers = self.optimizer.step(self.model.layers, self.criterion)
         
         return loss_sum / len(X)
     
@@ -60,6 +59,7 @@ class Trainer:
         
         for x, y in zip(X, y):
             y_hat = self.model.forward(x)
-            loss_sum += self.loss(y_hat, y)
+            loss_sum += self.criterion(y_hat, y)
+            
         return loss_sum / len(X)
     
