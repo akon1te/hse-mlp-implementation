@@ -6,8 +6,10 @@ import numpy as np
 import torch
 from torch.nn import init
 
+from src.utils.template import BaseClass
 
-class Linear:
+
+class Linear(BaseClass):
     
     in_features: int
     out_features: int
@@ -42,8 +44,8 @@ class Linear:
             bound = 1 / math.sqrt(fan_in) if fan_in > 0 else 0
             init.uniform_(torch_bias, -bound, bound)
             self.bias = torch_bias.numpy().astype(self.dtype)
-            
-    def __call__(self, inputs: np.ndarray) -> np.ndarray:
+
+    def forward(self, inputs: np.ndarray) -> np.ndarray:
         if len(inputs.shape) == 1:
             inputs = inputs.reshape(1, -1)
         
@@ -54,10 +56,10 @@ class Linear:
             outputs[idx] = np.dot(inputs[idx], self.weights.T) + self.bias
             
         assert outputs.shape == (inputs.shape[0], self.out_features)
-        return outputs        
+        return outputs  
         
     def backward(self, gradient: np.ndarray) -> np.ndarray:
         self.weights_grad = np.dot(self.inputs.T, gradient)
         self.bias_grad = np.sum(gradient, axis=0)
-        return gradient @ self.weights.T
+        return np.dot(gradient, self.weights.T)
         
