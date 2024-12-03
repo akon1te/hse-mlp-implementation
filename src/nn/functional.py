@@ -17,7 +17,7 @@ class Softmax(BaseClass):
         self.axis = axis
     
     def softmax(self, x: np.ndarray) -> np.ndarray:
-        exp_x_shifted = np.exp(x - np.amax(x, axis=self.axis, keepdims=True))
+        exp_x_shifted = np.exp(x - np.max(x, axis=self.axis, keepdims=True))
         value = exp_x_shifted / np.sum(exp_x_shifted, axis=self.axis, keepdims=True)
         return value
     
@@ -26,12 +26,14 @@ class Softmax(BaseClass):
         return self.value
 
     def backward(self, input_grad: np.ndarray) -> np.ndarray:
-        output_grad = np.zeros(input_grad.shape)
-        for i in range(input_grad.shape[0]):
-            d = np.diagflat(self.value[i]) - np.dot(self.value[i], self.value[i])
-            output_grad[i] = np.dot(input_grad[i], d)
+        #TODO: fix softmax backward function
+        
+        #output_grad = np.zeros(input_grad.shape)
+        #for i in range(input_grad.shape[0]):
+        #    d = np.diagflat(self.value[i]) - np.dot(self.value[i], self.value[i])
+        #    output_grad[i] = np.dot(input_grad[i], d)
 
-        return output_grad
+        return 1 * input_grad
     
     
 class MSELoss():
