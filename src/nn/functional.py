@@ -4,12 +4,12 @@ from src.utils.template import BaseClass
 
 
 class ReLU(BaseClass):
-    def forward(self, x: np.ndarray) -> np.ndarray:
-        self.output = np.maximum(0, x)   
-        return self.output
+    def forward(self, x: np.ndarray) -> np.ndarray:  
+        self.input = x
+        return np.maximum(0, x) 
 
     def backward(self, grad):
-        return grad * np.clip(self.output, 0, 1)
+        return np.where(self.input > 0, 1, 0) * grad
     
 
 class Softmax(BaseClass):
@@ -33,7 +33,7 @@ class Softmax(BaseClass):
         #    d = np.diagflat(self.value[i]) - np.dot(self.value[i], self.value[i])
         #    output_grad[i] = np.dot(input_grad[i], d)
 
-        return 1 * input_grad
+        return input_grad
     
     
 class MSELoss():
