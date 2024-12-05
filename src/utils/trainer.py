@@ -81,16 +81,16 @@ class Trainer:
     def predict(self, test_dataset, return_preds=None) -> None:
         assert self.eval_metric != None
         if not isinstance(test_dataset, DataLoader):
-            test_dataloader = DataLoader(test_dataset, batch_size=1)
+            test_dataset = DataLoader(test_dataset, batch_size=1)
                 
-        eval_results = self._eval_loop(test_dataloader, with_preds=True)
+        eval_results = self._eval_loop(test_dataset, with_preds=True)
         preds = eval_results[1]
         gt = eval_results[2]
         
         if return_preds:
-            return preds, gt, self.eval_metric(preds, gt)
+            return {"predictions": preds, "gt": gt, "metric": self.eval_metric(preds, gt)}
 
-        return self.eval_metric(preds, gt)
+        return {"metric": self.eval_metric(preds, gt)}
             
     def _train_loop(self, train_data: DataLoader, epoch: int) -> None:        
         loss_sum = 0

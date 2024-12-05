@@ -25,15 +25,13 @@ class Softmax(BaseClass):
         self.value = self.softmax(x)
         return self.value
 
-    def backward(self, input_grad: np.ndarray) -> np.ndarray:
-        #TODO: fix softmax backward function
-        
-        #output_grad = np.zeros(input_grad.shape)
-        #for i in range(input_grad.shape[0]):
-        #    d = np.diagflat(self.value[i]) - np.dot(self.value[i], self.value[i])
-        #    output_grad[i] = np.dot(input_grad[i], d)
+    def backward(self, gradient: np.ndarray) -> np.ndarray:
+        jac1 = np.zeros((self.value.shape[0], self.value.shape[1], self.value.shape[1]))
+        jac2 = np.zeros((self.value.shape[0], self.value.shape[1], self.value.shape[1]))
+        jac1 = np.einsum('ij,jk->ijk', self.value, np.eye(self.value.shape[-1]))
+        jac2 = np.einsum('ij,ik->ijk', self.value, self.value)
 
-        return input_grad
+        return ((jac1 - jac2) @ gradient[:, :, None]).squeeze(2)
     
     
 class MSELoss():
