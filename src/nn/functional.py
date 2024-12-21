@@ -50,4 +50,4 @@ class MSELoss():
             return np.sum((self.y - self.true) ** 2)
         
     def backward(self) -> np.ndarray:
-        return 2 * (self.y - self.true) / self.y.shape[0]
+        return 2 * (self.y - self.true) / self.y.size
